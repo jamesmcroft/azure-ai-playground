@@ -68,6 +68,7 @@ Write-Host "Updating local settings..."
 $ConfigurationFile = './.env'
 
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'RESOURCE_GROUP_NAME' -variableValue $ResourceGroupName
+Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'MANAGED_IDENTITY_CLIENT_ID' -variableValue $ManagedIdentityClientId
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'DOCUMENT_INTELLIGENCE_ENDPOINT' -variableValue $DocumentIntelligenceEndpoint
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_ENDPOINT' -variableValue $CompletionsOpenAIEndpoint
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_EMBEDDING_MODEL_DEPLOYMENT' -variableValue $CompletionsOpenAIEmbeddingDeployment
