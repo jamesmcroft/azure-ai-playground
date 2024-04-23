@@ -69,7 +69,7 @@ module documentIntelligence './ai_ml/document-intelligence.bicep' = {
   params: {
     name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
     location: documentIntelligenceLocation
-    tags: union(tags, {})
+    tags: union(tags, { Workload: workloadName, Capability: 'DocumentIntelligence' })
     roleAssignments: [
       {
         principalId: managedIdentity.outputs.principalId
@@ -94,7 +94,7 @@ module completionsOpenAI './ai_ml/openai.bicep' = {
   params: {
     name: '${abbrs.openAIService}${completionsResourceToken}'
     location: completionsOpenAILocation
-    tags: union(tags, {})
+    tags: union(tags, { Workload: workloadName, Capability: 'Completions' })
     deployments: [
       {
         name: completionsModelDeploymentName
@@ -136,7 +136,7 @@ module visionOpenAI './ai_ml/openai.bicep' = {
   params: {
     name: '${abbrs.openAIService}${visionResourceToken}'
     location: visionOpenAILocation
-    tags: union(tags, {})
+    tags: union(tags, { Workload: workloadName, Capability: 'Vision' })
     deployments: [
       {
         name: visionModelDeploymentName

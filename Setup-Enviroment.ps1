@@ -54,6 +54,7 @@ else {
 }
 
 $ResourceGroupName = $InfrastructureOutputs.resourceGroupInfo.value.name
+$ManagedIdentityClientId = $InfrastructureOutputs.managedIdentityInfo.value.clientId
 $DocumentIntelligenceEndpoint = $InfrastructureOutputs.documentIntelligenceInfo.value.endpoint
 $CompletionsOpenAIEndpoint = $InfrastructureOutputs.completionsOpenAIInfo.value.endpoint
 $CompletionsOpenAIEmbeddingDeployment = $InfrastructureOutputs.completionsOpenAIInfo.value.embeddingModelDeploymentName
