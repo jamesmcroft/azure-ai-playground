@@ -400,4 +400,4 @@ FodyWeavers.xsd
 # App Specific
 *.env
 *Outputs.json
-Response.json
+*Response.json
