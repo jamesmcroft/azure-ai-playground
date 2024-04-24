@@ -55,6 +55,7 @@ else {
 
 $ResourceGroupName = $InfrastructureOutputs.resourceGroupInfo.value.name
 $ManagedIdentityClientId = $InfrastructureOutputs.managedIdentityInfo.value.clientId
+$StorageAccountName = $InfrastructureOutputs.storageAccountInfo.value.name
 $DocumentIntelligenceEndpoint = $InfrastructureOutputs.documentIntelligenceInfo.value.endpoint
 $CompletionsOpenAIEndpoint = $InfrastructureOutputs.completionsOpenAIInfo.value.endpoint
 $CompletionsOpenAIEmbeddingDeployment = $InfrastructureOutputs.completionsOpenAIInfo.value.embeddingModelDeploymentName
@@ -69,6 +70,7 @@ $ConfigurationFile = './.env'
 
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'RESOURCE_GROUP_NAME' -variableValue $ResourceGroupName
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'MANAGED_IDENTITY_CLIENT_ID' -variableValue $ManagedIdentityClientId
+Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'STORAGE_ACCOUNT_NAME' -variableValue $StorageAccountName
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'DOCUMENT_INTELLIGENCE_ENDPOINT' -variableValue $DocumentIntelligenceEndpoint
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_ENDPOINT' -variableValue $CompletionsOpenAIEndpoint
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_EMBEDDING_MODEL_DEPLOYMENT' -variableValue $CompletionsOpenAIEmbeddingDeployment

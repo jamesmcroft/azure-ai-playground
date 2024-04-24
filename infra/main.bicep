@@ -58,6 +58,27 @@ module managedIdentity './security/managed-identity.bicep' = {
   }
 }
 
+resource storageBlobDataContributor 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  scope: resourceGroup
+  name: roles.storageBlobDataContributor
+}
+
+module storageAccount './storage/storage-account.bicep' = {
+  name: '${abbrs.storageAccount}${resourceToken}'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.storageAccount}${resourceToken}'
+    location: location
+    tags: union(tags, { Workload: workloadName })
+    roleAssignments: [
+      {
+        principalId: managedIdentity.outputs.principalId
+        roleDefinitionId: storageBlobDataContributor.id
+      }
+    ]
+  }
+}
+
 resource cognitiveServicesUser 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: resourceGroup
   name: roles.cognitiveServicesUser
@@ -184,6 +205,11 @@ output managedIdentityInfo object = {
   name: managedIdentity.outputs.name
   principalId: managedIdentity.outputs.principalId
   clientId: managedIdentity.outputs.clientId
+}
+
+output storageAccountInfo object = {
+  id: storageAccount.outputs.id
+  name: storageAccount.outputs.name
 }
 
 output documentIntelligenceInfo object = {
