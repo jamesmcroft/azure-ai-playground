@@ -58,6 +58,27 @@ module managedIdentity './security/managed-identity.bicep' = {
   }
 }
 
+resource cognitiveServicesUser 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  scope: resourceGroup
+  name: roles.cognitiveServicesUser
+}
+
+module documentIntelligence './ai_ml/document-intelligence.bicep' = {
+  name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
+    location: documentIntelligenceLocation
+    tags: union(tags, { Workload: workloadName, Capability: 'DocumentIntelligence' })
+    roleAssignments: [
+      {
+        principalId: managedIdentity.outputs.principalId
+        roleDefinitionId: cognitiveServicesUser.id
+      }
+    ]
+  }
+}
+
 resource storageBlobDataContributor 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: resourceGroup
   name: roles.storageBlobDataContributor
@@ -75,26 +96,9 @@ module storageAccount './storage/storage-account.bicep' = {
         principalId: managedIdentity.outputs.principalId
         roleDefinitionId: storageBlobDataContributor.id
       }
-    ]
-  }
-}
-
-resource cognitiveServicesUser 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  scope: resourceGroup
-  name: roles.cognitiveServicesUser
-}
-
-module documentIntelligence './ai_ml/document-intelligence.bicep' = {
-  name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
-  scope: resourceGroup
-  params: {
-    name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
-    location: documentIntelligenceLocation
-    tags: union(tags, { Workload: workloadName, Capability: 'DocumentIntelligence' })
-    roleAssignments: [
       {
-        principalId: managedIdentity.outputs.principalId
-        roleDefinitionId: cognitiveServicesUser.id
+        principalId: documentIntelligence.outputs.systemIdentityPrincipalId
+        roleDefinitionId: storageBlobDataContributor.id
       }
     ]
   }
@@ -217,6 +221,7 @@ output documentIntelligenceInfo object = {
   name: documentIntelligence.outputs.name
   endpoint: documentIntelligence.outputs.endpoint
   host: documentIntelligence.outputs.host
+  identityPrincipalId: documentIntelligence.outputs.systemIdentityPrincipalId
 }
 
 output completionsOpenAIInfo object = {

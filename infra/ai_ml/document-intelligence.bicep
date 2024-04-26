@@ -29,10 +29,13 @@ resource documentIntelligenceService 'Microsoft.CognitiveServices/accounts@2023-
   name: name
   location: location
   tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   kind: 'FormRecognizer'
   properties: {
     customSubDomainName: toLower(name)
-    disableLocalAuth: true
+    disableLocalAuth: false
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
@@ -81,3 +84,5 @@ output name string = documentIntelligenceService.name
 output endpoint string = documentIntelligenceService.properties.endpoint
 @description('Host for the deployed Document Intelligence resource.')
 output host string = split(documentIntelligenceService.properties.endpoint, '/')[2]
+@description('Identity principal ID for the deployed Document Intelligence resource.')
+output systemIdentityPrincipalId string = documentIntelligenceService.identity.principalId
