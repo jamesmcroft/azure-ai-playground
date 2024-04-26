@@ -44,6 +44,8 @@ param blobContainerRetention blobContainerRetentionInfo = {
   days: 7
   enabled: false
 }
+@description('Whether to disable local (key-based) authentication. Defaults to true.')
+param disableLocalAuth bool = true
 @description('Role assignments to create for the Storage Account.')
 param roleAssignments roleAssignmentInfo[] = []
 
@@ -59,7 +61,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
       bypass: 'AzureServices'
       defaultAction: 'Allow'
     }
-    allowSharedKeyAccess: false
+    allowSharedKeyAccess: !disableLocalAuth
     supportsHttpsTrafficOnly: true
     encryption: {
       services: {

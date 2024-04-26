@@ -18,6 +18,8 @@ param deployments array = []
   'Disabled'
 ])
 param publicNetworkAccess string = 'Enabled'
+@description('Whether to disable local (key-based) authentication. Defaults to true.')
+param disableLocalAuth bool = true
 @description('Role assignments to create for the OpenAI instance.')
 param roleAssignments roleAssignmentInfo[] = []
 
@@ -28,7 +30,7 @@ resource openAIService 'Microsoft.CognitiveServices/accounts@2023-10-01-preview'
   kind: 'OpenAI'
   properties: {
     customSubDomainName: toLower(name)
-    disableLocalAuth: true
+    disableLocalAuth: disableLocalAuth
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'

@@ -70,6 +70,7 @@ module documentIntelligence './ai_ml/document-intelligence.bicep' = {
     name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
     location: documentIntelligenceLocation
     tags: union(tags, { Workload: workloadName, Capability: 'DocumentIntelligence' })
+    disableLocalAuth: true
     roleAssignments: [
       {
         principalId: managedIdentity.outputs.principalId
@@ -91,6 +92,7 @@ module storageAccount './storage/storage-account.bicep' = {
     name: '${abbrs.storageAccount}${resourceToken}'
     location: location
     tags: union(tags, { Workload: workloadName })
+    disableLocalAuth: true
     roleAssignments: [
       {
         principalId: managedIdentity.outputs.principalId
@@ -120,6 +122,7 @@ module completionsOpenAI './ai_ml/openai.bicep' = {
     name: '${abbrs.openAIService}${completionsResourceToken}'
     location: completionsOpenAILocation
     tags: union(tags, { Workload: workloadName, Capability: 'Completions' })
+    disableLocalAuth: true
     deployments: [
       {
         name: completionsModelDeploymentName
@@ -162,6 +165,7 @@ module visionOpenAI './ai_ml/openai.bicep' = {
     name: '${abbrs.openAIService}${visionResourceToken}'
     location: visionOpenAILocation
     tags: union(tags, { Workload: workloadName, Capability: 'Vision' })
+    disableLocalAuth: true
     deployments: [
       {
         name: visionModelDeploymentName

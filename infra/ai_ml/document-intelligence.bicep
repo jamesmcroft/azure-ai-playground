@@ -22,6 +22,8 @@ param deployments array = []
   'Disabled'
 ])
 param publicNetworkAccess string = 'Enabled'
+@description('Whether to disable local (key-based) authentication. Defaults to true.')
+param disableLocalAuth bool = true
 @description('Role assignments to create for the Document Intelligence instance.')
 param roleAssignments roleAssignmentInfo[] = []
 
@@ -35,7 +37,7 @@ resource documentIntelligenceService 'Microsoft.CognitiveServices/accounts@2023-
   kind: 'FormRecognizer'
   properties: {
     customSubDomainName: toLower(name)
-    disableLocalAuth: false
+    disableLocalAuth: disableLocalAuth
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
