@@ -15,7 +15,9 @@ const getConfig = () => {
 
 export async function main() {
   var credential = new DefaultAzureCredential();
-  const client = new OpenAIClient(getConfig().openAIEndpoint, credential);
+  const client = new OpenAIClient(getConfig().openAIEndpoint, credential, {
+    apiVersion: "2024-03-01-preview",
+  });
   const deploymentId = getConfig().openAICompletionsModelDeployment;
 
   const text = `Dear Team,
