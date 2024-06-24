@@ -18,63 +18,86 @@ param tags object = {}
 @description('Primary location for the Document Intelligence service. Default is westeurope for latest preview support.')
 param documentIntelligenceLocation string = 'westeurope'
 
-@description('Primary location for the completions OpenAI service. Default is francecentral for latest preview support.')
-param completionsOpenAILocation string = 'francecentral'
+@description('Primary location for the completions OpenAI service. Default is swedencentral for most complete model support.')
+param openAILocation string = 'swedencentral'
 
-@description('Primary location for the vision OpenAI service. Default is westus for latest preview support.')
-param visionOpenAILocation string = 'westus'
+@description('Principal ID of the user that will be granted permission to access services.')
+param userPrincipalId string
 
 var abbrs = loadJsonContent('./abbreviations.json')
 var roles = loadJsonContent('./roles.json')
 var resourceToken = toLower(uniqueString(subscription().id, workloadName, location))
-
 var documentIntelligenceResourceToken = toLower(uniqueString(
   subscription().id,
   workloadName,
   documentIntelligenceLocation,
   'ai-document-intelligence'
 ))
-var completionsResourceToken = toLower(uniqueString(
-  subscription().id,
-  workloadName,
-  completionsOpenAILocation,
-  'ai-completions'
-))
-var visionResourceToken = toLower(uniqueString(subscription().id, workloadName, visionOpenAILocation, 'ai-vision'))
+var openAIResourceToken = toLower(uniqueString(subscription().id, workloadName, openAILocation, 'openai'))
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourceGroup}${workloadName}'
+  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.managementGovernance.resourceGroup}${workloadName}'
   location: location
   tags: union(tags, {})
 }
 
 module managedIdentity './security/managed-identity.bicep' = {
-  name: '${abbrs.managedIdentity}${resourceToken}'
+  name: '${abbrs.security.managedIdentity}${resourceToken}'
   scope: resourceGroup
   params: {
-    name: '${abbrs.managedIdentity}${resourceToken}'
+    name: '${abbrs.security.managedIdentity}${resourceToken}'
     location: location
     tags: union(tags, {})
   }
 }
 
-resource cognitiveServicesUser 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+resource contributor 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: resourceGroup
-  name: roles.cognitiveServicesUser
+  name: roles.general.contributor
 }
 
-module documentIntelligence './ai_ml/document-intelligence.bicep' = {
-  name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
+module resouceGroupRoleAssignment './security/resource-group-role-assignment.bicep' = {
+  name: '${resourceGroup.name}-role-assignment'
   scope: resourceGroup
   params: {
-    name: '${abbrs.documentIntelligence}${documentIntelligenceResourceToken}'
+    roleAssignments: [
+      {
+        principalId: userPrincipalId
+        roleDefinitionId: contributor.id
+        principalType: 'User'
+      }
+      {
+        principalId: managedIdentity.outputs.principalId
+        roleDefinitionId: contributor.id
+        principalType: 'ServicePrincipal'
+      }
+    ]
+  }
+}
+
+resource cognitiveServicesUser 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  scope: resourceGroup
+  name: roles.ai.cognitiveServicesUser
+}
+
+module documentIntelligenceService './ai_ml/document-intelligence.bicep' = {
+  name: '${abbrs.ai.documentIntelligence}${documentIntelligenceResourceToken}'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.ai.documentIntelligence}${documentIntelligenceResourceToken}'
     location: documentIntelligenceLocation
     tags: union(tags, { Workload: workloadName, Capability: 'DocumentIntelligence' })
     disableLocalAuth: true
     roleAssignments: [
       {
+        principalId: userPrincipalId
+        roleDefinitionId: cognitiveServicesUser.id
+        principalType: 'User'
+      }
+      {
         principalId: managedIdentity.outputs.principalId
         roleDefinitionId: cognitiveServicesUser.id
+        principalType: 'ServicePrincipal'
       }
     ]
   }
@@ -82,58 +105,66 @@ module documentIntelligence './ai_ml/document-intelligence.bicep' = {
 
 resource storageBlobDataContributor 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: resourceGroup
-  name: roles.storageBlobDataContributor
+  name: roles.storage.storageBlobDataContributor
 }
 
 module storageAccount './storage/storage-account.bicep' = {
-  name: '${abbrs.storageAccount}${resourceToken}'
+  name: '${abbrs.storage.storageAccount}${resourceToken}'
   scope: resourceGroup
   params: {
-    name: '${abbrs.storageAccount}${resourceToken}'
+    name: '${abbrs.storage.storageAccount}${resourceToken}'
     location: location
-    tags: union(tags, { Workload: workloadName })
-    disableLocalAuth: true
+    tags: union(tags, {})
+    sku: {
+      name: 'Standard_LRS'
+    }
     roleAssignments: [
+      {
+        principalId: userPrincipalId
+        roleDefinitionId: storageBlobDataContributor.id
+        principalType: 'User'
+      }
       {
         principalId: managedIdentity.outputs.principalId
         roleDefinitionId: storageBlobDataContributor.id
+        principalType: 'ServicePrincipal'
       }
       {
-        principalId: documentIntelligence.outputs.systemIdentityPrincipalId
+        principalId: documentIntelligenceService.outputs.systemIdentityPrincipalId
         roleDefinitionId: storageBlobDataContributor.id
+        principalType: 'ServicePrincipal'
       }
     ]
   }
 }
 
-resource cognitiveServicesOpenAIUser 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+resource cognitiveServicesOpenAIContributor 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: resourceGroup
-  name: roles.cognitiveServicesOpenAIUser
+  name: roles.ai.cognitiveServicesOpenAIContributor
 }
 
-var completionsModelDeploymentName = 'gpt-35-turbo'
-var visionModelDeploymentName = 'gpt-4-vision'
+var completionsModelDeploymentName = 'gpt-4o'
 var embeddingModelDeploymentName = 'text-embedding-ada-002'
 
-module completionsOpenAI './ai_ml/openai.bicep' = {
-  name: '${abbrs.openAIService}${completionsResourceToken}'
+module openAIService './ai_ml/openai.bicep' = {
+  name: '${abbrs.ai.openAIService}${openAIResourceToken}'
   scope: resourceGroup
   params: {
-    name: '${abbrs.openAIService}${completionsResourceToken}'
-    location: completionsOpenAILocation
-    tags: union(tags, { Workload: workloadName, Capability: 'Completions' })
+    name: '${abbrs.ai.openAIService}${openAIResourceToken}'
+    location: openAILocation
+    tags: union(tags, { Workload: workloadName, Capability: 'Generative AI' })
     disableLocalAuth: true
     deployments: [
       {
         name: completionsModelDeploymentName
         model: {
           format: 'OpenAI'
-          name: 'gpt-35-turbo'
-          version: '1106'
+          name: 'gpt-4o'
+          version: '2024-05-13'
         }
         sku: {
           name: 'Standard'
-          capacity: 30
+          capacity: 10
         }
       }
       {
@@ -145,64 +176,31 @@ module completionsOpenAI './ai_ml/openai.bicep' = {
         }
         sku: {
           name: 'Standard'
-          capacity: 30
+          capacity: 10
         }
       }
     ]
     roleAssignments: [
       {
+        principalId: userPrincipalId
+        roleDefinitionId: cognitiveServicesOpenAIContributor.id
+        principalType: 'User'
+      }
+      {
         principalId: managedIdentity.outputs.principalId
-        roleDefinitionId: cognitiveServicesOpenAIUser.id
+        roleDefinitionId: cognitiveServicesOpenAIContributor.id
+        principalType: 'ServicePrincipal'
       }
     ]
   }
 }
 
-module visionOpenAI './ai_ml/openai.bicep' = {
-  name: '${abbrs.openAIService}${visionResourceToken}'
-  scope: resourceGroup
-  params: {
-    name: '${abbrs.openAIService}${visionResourceToken}'
-    location: visionOpenAILocation
-    tags: union(tags, { Workload: workloadName, Capability: 'Vision' })
-    disableLocalAuth: true
-    deployments: [
-      {
-        name: visionModelDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: 'gpt-4'
-          version: 'vision-preview'
-        }
-        sku: {
-          name: 'Standard'
-          capacity: 30
-        }
-      }
-      {
-        name: embeddingModelDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: 'text-embedding-ada-002'
-          version: '2'
-        }
-        sku: {
-          name: 'Standard'
-          capacity: 30
-        }
-      }
-    ]
-    roleAssignments: [
-      {
-        principalId: managedIdentity.outputs.principalId
-        roleDefinitionId: cognitiveServicesOpenAIUser.id
-      }
-    ]
-  }
+output subscriptionInfo object = {
+  id: subscription().subscriptionId
+  tenantId: subscription().tenantId
 }
 
 output resourceGroupInfo object = {
-  id: resourceGroup.id
   name: resourceGroup.name
   location: resourceGroup.location
   workloadName: workloadName
@@ -221,27 +219,18 @@ output storageAccountInfo object = {
 }
 
 output documentIntelligenceInfo object = {
-  id: documentIntelligence.outputs.id
-  name: documentIntelligence.outputs.name
-  endpoint: documentIntelligence.outputs.endpoint
-  host: documentIntelligence.outputs.host
-  identityPrincipalId: documentIntelligence.outputs.systemIdentityPrincipalId
+  id: documentIntelligenceService.outputs.id
+  name: documentIntelligenceService.outputs.name
+  endpoint: documentIntelligenceService.outputs.endpoint
+  host: documentIntelligenceService.outputs.host
+  identityPrincipalId: documentIntelligenceService.outputs.systemIdentityPrincipalId
 }
 
-output completionsOpenAIInfo object = {
-  id: completionsOpenAI.outputs.id
-  name: completionsOpenAI.outputs.name
-  endpoint: completionsOpenAI.outputs.endpoint
-  host: completionsOpenAI.outputs.host
+output openAIInfo object = {
+  id: openAIService.outputs.id
+  name: openAIService.outputs.name
+  endpoint: openAIService.outputs.endpoint
+  host: openAIService.outputs.host
   completionModelDeploymentName: completionsModelDeploymentName
-  embeddingModelDeploymentName: embeddingModelDeploymentName
-}
-
-output visionOpenAIInfo object = {
-  id: visionOpenAI.outputs.id
-  name: visionOpenAI.outputs.name
-  endpoint: visionOpenAI.outputs.endpoint
-  host: visionOpenAI.outputs.host
-  visionModelDeploymentName: visionModelDeploymentName
   embeddingModelDeploymentName: embeddingModelDeploymentName
 }

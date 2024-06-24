@@ -5,10 +5,21 @@ param location string = resourceGroup().location
 @description('Tags for the resource.')
 param tags object = {}
 
+@export()
+@description('Role assignment information for an identity.')
+type roleAssignmentInfo = {
+  @description('Role definition ID for the RBAC role to assign to the identity.')
+  roleDefinitionId: string
+  @description('Principal ID of the identity to assign to.')
+  principalId: string
+  @description('Type of the principal ID.')
+  principalType: 'Device' | 'User' | 'Group' | 'ServicePrincipal' | 'ForeignGroup'
+}
+
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' = {
-    name: name
-    location: location
-    tags: tags
+  name: name
+  location: location
+  tags: tags
 }
 
 @description('ID for the deployed Managed Identity resource.')

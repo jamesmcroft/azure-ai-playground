@@ -28,10 +28,13 @@ Push-Location -Path $PSScriptRoot
 
 az --version
 
+$userPrincipalId = ((az rest --method GET --uri "https://graph.microsoft.com/v1.0/me") | ConvertFrom-Json).id
+
 $DeploymentOutputs = (az deployment sub create --name $DeploymentName --location $Location --template-file './main.bicep' `
         --parameters './main.parameters.json' `
         --parameters workloadName=$DeploymentName `
         --parameters location=$Location `
+        --parameters userPrincipalId=$userPrincipalId `
         --query properties.outputs -o json) | ConvertFrom-Json
 $DeploymentOutputs | ConvertTo-Json | Out-File -FilePath './InfrastructureOutputs.json' -Encoding utf8
 

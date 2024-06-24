@@ -41,12 +41,11 @@ function Set-ConfigurationFileVariable($configurationFile, $variableName, $varia
 
 Write-Host "Starting environment setup..."
 
-if ($SkipInfrastructure -eq '$false' || -not (Test-Path -Path './infra/InfrastructureOutputs.json')) {
+if ($SkipInfrastructure -eq '$false' -or -not (Test-Path -Path './infra/InfrastructureOutputs.json')) {
     Write-Host "Deploying infrastructure..."
     $InfrastructureOutputs = (./infra/Deploy-Infrastructure.ps1 `
             -DeploymentName $DeploymentName `
-            -Location $Location `
-            -ErrorAction Stop)
+            -Location $Location)
 }
 else {
     Write-Host "Skipping infrastructure deployment. Using existing outputs..."
@@ -57,12 +56,9 @@ $ResourceGroupName = $InfrastructureOutputs.resourceGroupInfo.value.name
 $ManagedIdentityClientId = $InfrastructureOutputs.managedIdentityInfo.value.clientId
 $StorageAccountName = $InfrastructureOutputs.storageAccountInfo.value.name
 $DocumentIntelligenceEndpoint = $InfrastructureOutputs.documentIntelligenceInfo.value.endpoint
-$CompletionsOpenAIEndpoint = $InfrastructureOutputs.completionsOpenAIInfo.value.endpoint
-$CompletionsOpenAIEmbeddingDeployment = $InfrastructureOutputs.completionsOpenAIInfo.value.embeddingModelDeploymentName
-$CompletionsOpenAIModelDeployment = $InfrastructureOutputs.completionsOpenAIInfo.value.completionModelDeploymentName
-$VisionOpenAIEndpoint = $InfrastructureOutputs.visionOpenAIInfo.value.endpoint
-$VisionOpenAIEmbeddingDeployment = $InfrastructureOutputs.visionOpenAIInfo.value.embeddingModelDeploymentName
-$VisionOpenAIModelDeployment = $InfrastructureOutputs.visionOpenAIInfo.value.visionModelDeploymentName
+$CompletionsOpenAIEndpoint = $InfrastructureOutputs.openAIInfo.value.endpoint
+$CompletionsOpenAIEmbeddingDeployment = $InfrastructureOutputs.openAIInfo.value.embeddingModelDeploymentName
+$CompletionsOpenAIModelDeployment = $InfrastructureOutputs.openAIInfo.value.completionModelDeploymentName
 
 Write-Host "Updating local settings..."
 
@@ -75,6 +71,3 @@ Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableNam
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_ENDPOINT' -variableValue $CompletionsOpenAIEndpoint
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_EMBEDDING_MODEL_DEPLOYMENT' -variableValue $CompletionsOpenAIEmbeddingDeployment
 Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'COMPLETIONS_OPENAI_COMPLETION_MODEL_DEPLOYMENT' -variableValue $CompletionsOpenAIModelDeployment
-Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'VISION_OPENAI_ENDPOINT' -variableValue $VisionOpenAIEndpoint
-Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'VISION_OPENAI_EMBEDDING_MODEL_DEPLOYMENT' -variableValue $VisionOpenAIEmbeddingDeployment
-Set-ConfigurationFileVariable -configurationFile $ConfigurationFile -variableName 'VISION_OPENAI_MODEL_DEPLOYMENT' -variableValue $VisionOpenAIModelDeployment
