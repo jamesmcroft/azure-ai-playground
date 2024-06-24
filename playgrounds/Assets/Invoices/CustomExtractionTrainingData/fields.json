@@ -1,0 +1,143 @@
+{
+	"$schema": "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/fields.json",
+	"fields": [
+		{
+			"fieldKey": "InvoiceNumber",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "PurchaseOrderNumber",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "CustomerName",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "CustomerAddress",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "DeliveryDate",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "Products",
+			"fieldFormat": "not-specified",
+			"fieldType": "array",
+			"itemType": "Products_object"
+		},
+		{
+			"fieldKey": "TotalProductQuantity",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "TotalProductPrice",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "Returns",
+			"fieldFormat": "not-specified",
+			"fieldType": "array",
+			"itemType": "Returns_object"
+		},
+		{
+			"fieldKey": "InvoiceCustomerSignature",
+			"fieldType": "signature",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "InvoiceDriverSignature",
+			"fieldType": "signature",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "InvoiceCustomerName",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "InvoiceDriverName",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "ReturnsCustomerSignature",
+			"fieldType": "signature",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "ReturnsDriverSignature",
+			"fieldType": "signature",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "ReturnsCustomerName",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		},
+		{
+			"fieldKey": "ReturnsDriverName",
+			"fieldType": "string",
+			"fieldFormat": "not-specified"
+		}
+	],
+	"definitions": {
+		"Products_object": {
+			"fieldKey": "Products_object",
+			"fieldType": "object",
+			"fieldFormat": "not-specified",
+			"fields": [
+				{
+					"fieldKey": "Id",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				},
+				{
+					"fieldKey": "UnitPrice",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				},
+				{
+					"fieldKey": "Quantity",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				},
+				{
+					"fieldKey": "Total",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				}
+			]
+		},
+		"Returns_object": {
+			"fieldKey": "Returns_object",
+			"fieldType": "object",
+			"fieldFormat": "not-specified",
+			"fields": [
+				{
+					"fieldKey": "Id",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				},
+				{
+					"fieldKey": "Quantity",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				},
+				{
+					"fieldKey": "Reason",
+					"fieldType": "string",
+					"fieldFormat": "not-specified"
+				}
+			]
+		}
+	}
+}
