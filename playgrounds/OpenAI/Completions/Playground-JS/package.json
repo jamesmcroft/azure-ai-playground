@@ -1,9 +1,9 @@
 {
-  "name": "openai",
+  "name": "openai-completions-playground-js",
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
-    "prebuild": "@powershell copy ../../../.env ./dist",
+    "prebuild": "pwsh -Command copy ../../../../.env ./dist",
     "start": "node dist/index.js"
   },
   "dependencies": {
