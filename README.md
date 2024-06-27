@@ -30,7 +30,7 @@ Once deployed, the script will create a `.env` file in the root of the project w
 
 ### Azure AI Document Intelligence
 
-- [Markdown to Structured Object Extraction with GPT](./playgrounds/DocumentIntelligence/MarkdownDataExtraction.ipynb)
+- [Pre-built Layout Markdown to Structured Object Extraction with GPT](./playgrounds/DocumentIntelligence/Prebuilt-Layout-Markdown-GPT-Data-Extraction/Playground.ipynb)
   - **Note**: This playground has been matured into a sample - [Using Azure AI Document Intelligence and Azure OpenAI GPT-3.5 Turbo to extract structured data from documents](https://github.com/jamesmcroft/azure-document-intelligence-markdown-to-openai-data-extraction-sample)
-- [Pre-built Invoice Extraction with Custom Fields](./playgrounds/DocumentIntelligence/PrebuiltInvoiceExtraction.ipynb)
+- [Pre-built Invoice Extraction with Custom Fields](./playgrounds/DocumentIntelligence/Prebuilt-Invoice-Custom-Field-Extraction/Playground.ipynb)
   - Demonstrate how to use the Azure AI Document Intelligence service's pre-built invoice extraction model to extract fields from any invoice, including custom fields.
