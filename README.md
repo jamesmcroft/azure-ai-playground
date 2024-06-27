@@ -5,7 +5,7 @@ This repository is primarily used to test and evaluate techniques with Azure AI 
 This repository is not intended for production use, and the code contained within is not guaranteed to be secure or optimized. It is intended for educational purposes only.
 
 > [!NOTE]
-> The playgrounds are primarily built with .NET, however, libraries to interface with Azure services are available in other languages such as Python. The code can be easily translated to other languages.
+> The playgrounds are primarily built with various languages including .NET, Python, and TypeScript. However, not every playground has an environment for each language. Libraries to interface with Azure services are available in each of these languages, and the code can be easily translated to them with studying the API surface layer and utilizing AI.
 
 ## Pre-requisites
 
