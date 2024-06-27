@@ -9,14 +9,21 @@ This repository is not intended for production use, and the code contained withi
 
 ## Pre-requisites
 
-- Install the latest [**.NET SDK**](https://dotnet.microsoft.com/download).
-- Install [**PowerShell Core**](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1).
-- Install the [**Azure CLI**](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
-- Install [**Visual Studio Code**](https://code.visualstudio.com/) with the [**Polyglot Notebooks extension**](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-interactive-vscode).
+This repository contains a [devcontainer](./.devcontainer) configuration for Visual Studio Code. This configuration contains all the necessary tools and libraries to run the code in this repository. To use the devcontainer, you must have the following installed on your local machine:
+
+- Install [**Visual Studio Code**](https://code.visualstudio.com/download)
+- Install [**Docker Desktop**](https://www.docker.com/products/docker-desktop)
+- Install [**Remote - Containers**](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for Visual Studio Code
+
+> [!NOTE]
+> If you are not planning on using the Dev Container, you must also install [**PowerShell Core**](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell), [**Azure CLI**](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), [**.NET SDK**](https://dotnet.microsoft.com/download), [**Nodejs**](https://nodejs.org/en/download/), and [**Python**](https://www.python.org/) on your local machine, as well as the necessary Python packages from the [**requirements.txt**](./requirements.txt) file. 
 
 ## Setting up the Azure AI Services
 
 To setup an environment in Azure, simply run the [Setup-Environment.ps1](./Setup-Environment.ps1) script from the root of the project:
+
+> [!IMPORTANT]
+> Ensure that you have run the `az login` command to authenticate with Azure before running the script, and selected your subscription using `az account set --subscription <SubscriptionId>`.
 
 ```powershell
 .\Setup-Environment.ps1 -DeploymentName <DeploymentName> -Location <Location> -SkipInfrastructure $false
