@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime
 import json
 
@@ -26,6 +27,29 @@ class InvoiceDataProduct:
             'total': self.total,
             'reason': self.reason
         }
+    
+    def compare_accuracy(self, actual: InvoiceDataProduct | None):
+        accuracy = {
+            'id': 0,
+            'description': 0,
+            'unit_price': 0,
+            'quantity': 0,
+            'total': 0,
+            'reason': 0
+        }
+
+        if actual is None:
+            return accuracy
+        
+        accuracy['id'] = 1 if self.id == actual.id else 0
+        accuracy['description'] = 1 if self.description == actual.description else 0
+        accuracy['unit_price'] = 1 if self.unit_price == actual.unit_price else 0
+        accuracy['quantity'] = 1 if self.quantity == actual.quantity else 0
+        accuracy['total'] = 1 if self.total == actual.total else 0
+        accuracy['reason'] = 1 if self.reason == actual.reason else 0
+        accuracy['overall'] = sum(accuracy.values()) / len(accuracy)
+
+        return accuracy
 
 class InvoiceData:
     def __init__(self, invoice_number: str | None = None, purchase_order_number: str | None = None, customer_name: str | None = None, customer_address: str | None = None, delivery_date: str | None = None, payable_by: str | None = None, products: list[InvoiceDataProduct] | None = None, returns: list[InvoiceDataProduct] | None = None, total_product_quantity: float | None = None, total_product_price: float | None = None):
@@ -52,7 +76,7 @@ class InvoiceData:
     total_product_price: float | None
 
     @staticmethod
-    def from_json(json_content_str: str):
+    def from_json_str(json_content_str: str):
         json_content = json.loads(json_content_str)
         invoice_number = json_content.get('invoice_number', None)
         purchase_order_number = json_content.get('purchase_order_number', None)
@@ -151,3 +175,68 @@ class InvoiceData:
             'total_product_quantity': self.total_product_quantity,
             'total_product_price': self.total_product_price
         }
+    
+    def compare_accuracy(self, actual: InvoiceData | None):
+        accuracy = {
+            'invoice_number': 0,
+            'purchase_order_number': 0,
+            'customer_name': 0,
+            'customer_address': 0,
+            'delivery_date': 0,
+            'payable_by': 0,
+            'products': [],
+            'products_overall': 0,
+            'returns': [],
+            'returns_overall': 0,
+            'total_product_quantity': 0,
+            'total_product_price': 0,
+            'overall': 0
+        }
+
+        if actual is None:
+            return accuracy
+        
+        accuracy['invoice_number'] = 1 if self.invoice_number == actual.invoice_number else 0
+        accuracy['purchase_order_number'] = 1 if self.purchase_order_number == actual.purchase_order_number else 0
+        accuracy['customer_name'] = 1 if self.customer_name == actual.customer_name else 0
+        accuracy['customer_address'] = 1 if self.customer_address == actual.customer_address else 0
+        accuracy['delivery_date'] = 1 if self.delivery_date == actual.delivery_date else 0
+        accuracy['payable_by'] = 1 if self.payable_by == actual.payable_by else 0
+        accuracy['total_product_quantity'] = 1 if self.total_product_quantity == actual.total_product_quantity else 0
+        accuracy['total_product_price'] = 1 if self.total_product_price == actual.total_product_price else 0
+
+        if actual.products is None:
+            accuracy['products_overall'] = 1 if self.products is None else 0
+        else:
+            if self.products is None:
+                accuracy['products_overall'] = 0
+            else:
+                for actual_product in actual.products:
+                    expected_product = next((product for product in self.products if product.id == actual_product.id), None)
+                    if expected_product is not None:
+                        accuracy['products'].append(expected_product.compare_accuracy(actual_product))
+                    else:
+                        accuracy['products'].append({'overall': 0})
+
+                num_products = len(accuracy['products']) if len(accuracy['products']) > 0 else 1
+                accuracy['products_overall'] = sum([product['overall'] for product in accuracy['products']]) / num_products
+
+        if actual.returns is None:
+            accuracy['returns_overall'] = 1 if self.returns is None else 0
+        else:
+            if self.returns is None:
+                accuracy['returns_overall'] = 0
+            else:
+                for actual_return in actual.returns:
+                    expected_return = next((return_product for return_product in self.returns if return_product.id == actual_return.id), None)
+                    if expected_return is not None:
+                        accuracy['returns'].append(expected_return.compare_accuracy(actual_return))
+                    else:
+                        accuracy['returns'].append({'overall': 0})
+                
+                num_returns = len(accuracy['returns']) if len(accuracy['returns']) > 0 else 1
+                accuracy['returns_overall'] = sum([return_product['overall'] for return_product in accuracy['returns']]) / num_returns
+
+        accuracy['overall'] = (accuracy['invoice_number'] + accuracy['purchase_order_number'] + accuracy['customer_name'] + accuracy['customer_address'] + accuracy['delivery_date'] + accuracy['payable_by'] + accuracy['total_product_quantity'] + accuracy['total_product_price'] + accuracy['products_overall'] + accuracy['returns_overall']) / 10
+
+        return accuracy
