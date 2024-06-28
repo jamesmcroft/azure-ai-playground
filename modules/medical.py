@@ -61,8 +61,7 @@ class MedicalRecordReferral:
     def compare_accuracy(self, actual: MedicalRecordReferral | None):
         accuracy = {
             'referred_by': 0,
-            'referral_date': 0,
-            'notes_summary': 0
+            'referral_date': 0
         }
 
         if actual is None:
@@ -70,7 +69,6 @@ class MedicalRecordReferral:
         
         accuracy['referred_by'] = 1 if self.referred_by == actual.referred_by else 0
         accuracy['referral_date'] = 1 if self.referral_date == actual.referral_date else 0
-        accuracy['notes_summary'] = 1 if self.notes_summary == actual.notes_summary else 0
         accuracy['overall'] = sum(accuracy.values()) / len(accuracy)
 
         return accuracy
@@ -178,4 +176,6 @@ class MedicalRecord:
                 num_referrals = len(accuracy['referrals']) if len(accuracy['referrals']) > 0 else 1
                 accuracy['referrals_overall'] = sum([referral['overall'] for referral in accuracy['referrals']]) / num_referrals
 
+        accuracy['overall'] = (accuracy['patient_details']['overall'] + accuracy['referrals_overall']) / 2
+        
         return accuracy
