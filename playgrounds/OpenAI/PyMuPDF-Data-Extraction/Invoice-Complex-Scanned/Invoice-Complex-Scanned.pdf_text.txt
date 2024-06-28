@@ -1,0 +1,49 @@
+N EXGEN
+Innovation drives progress
+|
+INVOICE
+:
+|
+|
+|Customer: |Sharp Consulting
+lAddress: |73 Regal Way, Leeds, LS1 5AB, UK
+|
+Delv. Date:|5/1 6/2024
+linvoice Number: |38471 93
+Purchase Order: |15931
+|
+|
+MA197
+STRETCHWRAP ROLL
+/16.62
+bs
+sa.0
+|
+ST4086
+BALLPOINT PEN MED.
+24.90
+|
+JF9912413BF|BUBBLE FILM ROLL CL. |15.46
+ho
+ft5.52
+eeee
+NOTES
+ine
+|
+|
+Payable on or befarg$/24/2024
+ay 5:
+=F
+cms | SP
+ese |
+|
+C=”
+a
+Saga
+A
+ence
+|
+:
+|
+|
+|

@@ -186,8 +186,6 @@ class InvoiceData:
             'payable_by': 0,
             'products': [],
             'products_overall': 0,
-            'returns': [],
-            'returns_overall': 0,
             'total_product_quantity': 0,
             'total_product_price': 0,
             'overall': 0
@@ -221,22 +219,6 @@ class InvoiceData:
                 num_products = len(accuracy['products']) if len(accuracy['products']) > 0 else 1
                 accuracy['products_overall'] = sum([product['overall'] for product in accuracy['products']]) / num_products
 
-        if actual.returns is None:
-            accuracy['returns_overall'] = 1 if self.returns is None else 0
-        else:
-            if self.returns is None:
-                accuracy['returns_overall'] = 0
-            else:
-                for actual_return in actual.returns:
-                    expected_return = next((return_product for return_product in self.returns if return_product.id == actual_return.id), None)
-                    if expected_return is not None:
-                        accuracy['returns'].append(expected_return.compare_accuracy(actual_return))
-                    else:
-                        accuracy['returns'].append({'overall': 0})
-                
-                num_returns = len(accuracy['returns']) if len(accuracy['returns']) > 0 else 1
-                accuracy['returns_overall'] = sum([return_product['overall'] for return_product in accuracy['returns']]) / num_returns
-
-        accuracy['overall'] = (accuracy['invoice_number'] + accuracy['purchase_order_number'] + accuracy['customer_name'] + accuracy['customer_address'] + accuracy['delivery_date'] + accuracy['payable_by'] + accuracy['total_product_quantity'] + accuracy['total_product_price'] + accuracy['products_overall'] + accuracy['returns_overall']) / 10
+        accuracy['overall'] = (accuracy['invoice_number'] + accuracy['purchase_order_number'] + accuracy['customer_name'] + accuracy['customer_address'] + accuracy['delivery_date'] + accuracy['payable_by'] + accuracy['total_product_quantity'] + accuracy['total_product_price'] + accuracy['products_overall']) / 9
 
         return accuracy
