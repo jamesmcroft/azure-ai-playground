@@ -41,3 +41,10 @@ Once deployed, the script will create a `.env` file in the root of the project w
   - **Note**: This playground has been matured into a sample - [Using Azure AI Document Intelligence and Azure OpenAI GPT-3.5 Turbo to extract structured data from documents](https://github.com/jamesmcroft/azure-document-intelligence-markdown-to-openai-data-extraction-sample)
 - [Pre-built Invoice Extraction with Custom Fields](./playgrounds/DocumentIntelligence/Prebuilt-Invoice-Custom-Field-Extraction/Playground.ipynb)
   - Demonstrate how to use the Azure AI Document Intelligence service's pre-built invoice extraction model to extract fields from any invoice, including custom fields.
+
+### Azure OpenAI
+
+- [Document Data Extraction with PyMuPDF and Azure OpenAI GPT models](./playgrounds/OpenAI/PyMuPDF-Data-Extraction/Playground.ipynb)
+  - Demonstrate how to use PyMuPDF as the data extraction tool in application code, and Azure OpenAI GPT models as the language model to extract structured data from documents.
+  - **Benefits**: For PDFs with structure (i.e., computer-readable text, lists, tables, etc.), PyMuPDF can extract data from the document without the need for OCR. If scanned, PyMuPDF can be used in conjunction with Tessaract OCR to extract text.
+  - **Drawbacks**: Tesseract OCR extraction is not great at accurately extracting text, particularly when the text is in a grid layout. In general, processing text with no structure using language models does always yield highly accurate results, and varies from document to document.
