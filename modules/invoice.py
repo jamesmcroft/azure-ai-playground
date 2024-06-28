@@ -124,9 +124,7 @@ class InvoiceData:
     
     def to_json(self):
         products = []
-        if self.products is None:
-            self.products = []
-        else:
+        if self.products is not None:
             for product in self.products:
                 if isinstance(product, InvoiceDataProduct):
                     products.append(product.to_json())
@@ -134,9 +132,7 @@ class InvoiceData:
                     print('Products: Expected InvoiceDataProduct, got: ', type(product))
 
         returns = []
-        if self.returns is None:
-            self.returns = []
-        else:
+        if self.returns is not None:
             for return_product in self.returns:
                 if isinstance(return_product, InvoiceDataProduct):
                     returns.append(return_product.to_json())
