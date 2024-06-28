@@ -1,0 +1,8 @@
+{
+    "id": "user-setup",
+    "name": "Config for the user dev env",
+    "install": {
+        "app": "",
+        "file": "install.sh"
+    }
+}
