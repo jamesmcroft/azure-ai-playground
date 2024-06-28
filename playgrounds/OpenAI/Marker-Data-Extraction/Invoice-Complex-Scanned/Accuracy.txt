@@ -1,0 +1,43 @@
+Response:
+{
+  "invoice_number": "3847193",
+  "purchase_order_number": "15931",
+  "customer_name": "Sharp Consulting",
+  "customer_address": "73 Regal Way, Leeds, LS1 5AB, UK",
+  "delivery_date": "2024-05-16",
+  "payable_by": "2024-06-24",
+  "products": [
+    {
+      "id": "MA197",
+      "description": "STRETCHWRAP ROLL",
+      "unit_price": 16.62,
+      "quantity": 5.0,
+      "total": 83.10,
+      "reason": null
+    },
+    {
+      "id": "ST4086",
+      "description": "BALLPOINT PEN MED.",
+      "unit_price": 2.49,
+      "quantity": 10.0,
+      "total": 24.90,
+      "reason": null
+    },
+    {
+      "id": "JF9912413BF",
+      "description": "BUBBLE FILM ROLL CL.",
+      "unit_price": 15.46,
+      "quantity": 12.0,
+      "total": 185.52,
+      "reason": null
+    }
+  ],
+  "returns": [],
+  "total_product_quantity": 27.0,
+  "total_product_price": 293.52
+}
+
+Overall Accuracy: 80.00%
+
+Accuracy Detail:
+{'invoice_number': 1, 'purchase_order_number': 1, 'customer_name': 1, 'customer_address': 1, 'delivery_date': 1, 'payable_by': 0, 'products': [{'id': 1, 'description': 1, 'unit_price': 1, 'quantity': 1, 'total': 1, 'reason': 1, 'overall': 1.0}, {'id': 1, 'description': 1, 'unit_price': 1, 'quantity': 1, 'total': 1, 'reason': 1, 'overall': 1.0}, {'id': 1, 'description': 1, 'unit_price': 1, 'quantity': 1, 'total': 1, 'reason': 1, 'overall': 1.0}], 'products_overall': 1.0, 'returns': [], 'returns_overall': 0.0, 'total_product_quantity': 1, 'total_product_price': 1, 'overall': 0.8}
