@@ -1,12 +1,23 @@
 # Document Data Extraction with Marker and Azure OpenAI GPT models
 
-## Benefits
-- Marker can provide similar Markdown representations for PDF documents as Azure AI Document Intelligence. However, Azure AI Document Intelligence's Markdown representation has higher accuracy in terms of structure. 
-- As with Azure AI Document Intelligence, Marker's Markdown provides a better structure for language models such as GPT to extract structured data from documents.
-- For scanned PDFs, Marker utilizes OCR techniques using [Surya](https://github.com/VikParuchuri/surya), and has the option to replace with an alternative such as Tesseract.
-- For PDFs with structure (i.e., computer-readable text, lists, tables, etc.), Marker can convert to Markdown without the need to perform OCR over all the text, as well as combine results with OCR for visual elements.
+## We believed
+- Using Marker for converting PDFs to Markdown would provide similar benefits to Azure AI Document Intelligence when extracting structured data downstream from results using language models.
 
-## Drawbacks
-- Marker is a resource intensive operation, and can take a long time to process large documents without a high-performance GPU compute resource.
-- Some handwritten content may not be accurately extracted using Surya OCR when compared to Azure AI Document Intelligence's OCR capabilities.
-- As with Azure AI Document Intelligence, complex grid layouts do not accurately result in a structured Markdown representation using tables. This is due to limitations in Markdown's table format.
+## We observed
+- Marker can provide Markdown representations for PDF documents with structure, similar to Azure AI Document Intelligence, but with lower accuracy, especially for tables.
+- Both Marker and Azure's Markdown output facilitate better structured data extraction when processed by language models.
+- Marker's OCR using [Surya](https://github.com/VikParuchuri/surya), is efficient, outperforming Tesseract, but not as effective as Azure AI Document Intelligence's OCR for handwritten content.
+- Marker can convert PDFs with computer-readable text directly to Markdown without extensive OCR processing, combining OCR results for visual elements.
+- Processing with complex scanned invoices, combined with extraction using GPT-4o, resulted in an average accuracy of 83%.
+
+## We learned
+- Marker and Azure AI Document Intelligence both excel in converting structured PDFs to Markdown, aiding in the extraction of structured data for language models.
+- Marker is resource-intensive for OCR and requires a high-performance GPU for processing large documents efficiently.
+- Some handwritten content poses a challenge for Marker's OCR, indicating a need to explore alternatives.
+- Marker, like Azure AI Document Intelligence, can struggle with complex grid layouts due to Markdown's limitations in representing tables accurately for merged cells and multi-row/column spans.
+
+## Therefore, we recommend
+- For high accuracy and better structure in document extraction, especially for handwritten content and complex grids, consider using Azure AI Document Intelligence over Marker.
+- Ensure access to high-performance GPU resources when using Marker for processing large documents with OCR to avoid long processing times.
+- For documents with extensive visual elements and structured text, utilize Marker's ability to combine OCR results with structural conversion to Markdown for optimal results.
+- Use Marker in scenarios where cloud-based services are not feasible or where a self-hosted solution is preferred for data extraction tasks.
