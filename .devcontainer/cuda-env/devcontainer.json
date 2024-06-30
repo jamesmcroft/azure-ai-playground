@@ -1,5 +1,5 @@
 {
-  "name": "Azure AI Playground devcontainer",
+  "name": "Azure AI Playground - CUDA",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
@@ -28,7 +28,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "version": "latest"
     },
-    "./local-features/user-setup": "latest"
+    "./local-features/cuda-dev-tools": "latest"
   },
   "overrideFeatureInstallOrder": [
     "ghcr.io/devcontainers/features/git",
@@ -40,10 +40,8 @@
     "ghcr.io/devcontainers/features/git-lfs",
     "ghcr.io/devcontainers/features/github-cli",
     "ghcr.io/devcontainers/features/docker-in-docker",
-    "./local-features/user-setup"
+    "./local-features/cuda-dev-tools"
   ],
-  "remoteUser": "vscode",
-  "containerUser": "vscode",
   "forwardPorts": [],
   "otherPortsAttributes": {
     "onAutoForward": "ignore"
@@ -60,9 +58,13 @@
         "ms-vscode.powershell",
         "ms-dotnettools.csdevkit",
         "GitHub.vscode-pull-request-github",
-        "ms-dotnettools.dotnet-interactive-vscode"
+        "ms-dotnettools.dotnet-interactive-vscode",
+        "NVIDIA.nsight-vscode-edition"
       ]
     }
   },
-  "postCreateCommand": "pip3 --disable-pip-version-check install --user -r requirements.txt"
+  "postCreateCommand": "pip3 --disable-pip-version-check install --user -r requirements.txt --extra-index-url https://pypi.nvidia.com && nvidia-smi",
+  "runArgs": [
+    "--gpus=all"
+  ]
 }

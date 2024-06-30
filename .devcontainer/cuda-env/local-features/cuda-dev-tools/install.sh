@@ -1,0 +1,1 @@
+pip install matplotlib transformers pillow torch flash_attn timm einops

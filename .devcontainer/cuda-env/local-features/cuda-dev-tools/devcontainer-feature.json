@@ -1,6 +1,6 @@
 {
-    "id": "user-setup",
-    "name": "Config for the user dev env",
+    "id": "cuda-dev-tools",
+    "name": "CUDA Development Tools",
     "install": {
         "app": "",
         "file": "install.sh"
