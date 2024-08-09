@@ -9,7 +9,7 @@
 .PARAMETER Location
     The location to deploy the Azure resources to.
 .EXAMPLE
-    .\Deploy-Infrastructure.ps1 -DeploymentName "ai-playground" -Location "westeurope"
+    .\Deploy-Infrastructure.ps1 -DeploymentName "ai-playground" -Location "swedencentral"
 .NOTES
     Author: James Croft
 #>
@@ -26,15 +26,13 @@ Write-Host "Starting infrastructure deployment..."
 
 Push-Location -Path $PSScriptRoot
 
-az --version
-
-$userPrincipalId = ((az rest --method GET --uri "https://graph.microsoft.com/v1.0/me") | ConvertFrom-Json).id
+$UserPrincipalId = ((az rest --method GET --uri "https://graph.microsoft.com/v1.0/me") | ConvertFrom-Json).id
 
 $DeploymentOutputs = (az deployment sub create --name $DeploymentName --location $Location --template-file './main.bicep' `
         --parameters './main.parameters.json' `
         --parameters workloadName=$DeploymentName `
         --parameters location=$Location `
-        --parameters userPrincipalId=$userPrincipalId `
+        --parameters userPrincipalId=$UserPrincipalId `
         --query properties.outputs -o json) | ConvertFrom-Json
 $DeploymentOutputs | ConvertTo-Json | Out-File -FilePath './InfrastructureOutputs.json' -Encoding utf8
 

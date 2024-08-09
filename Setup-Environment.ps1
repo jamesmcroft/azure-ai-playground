@@ -11,7 +11,6 @@
     .\Setup-Environment.ps1 -DeploymentName 'my-deployment' -Location 'westeurope' -SkipInfrastructure $false
 .NOTES
     Author: James Croft
-    Date: 2024-04-22
 #>
 
 param
@@ -20,8 +19,8 @@ param
     [string]$DeploymentName,
     [Parameter(Mandatory = $true)]
     [string]$Location,
-    [Parameter(Mandatory = $true)]
-    [string]$SkipInfrastructure
+    [Parameter(Mandatory = $false)]
+    [bool]$SkipInfrastructure
 )
 
 function Set-ConfigurationFileVariable($configurationFile, $variableName, $variableValue) {
@@ -41,11 +40,12 @@ function Set-ConfigurationFileVariable($configurationFile, $variableName, $varia
 
 Write-Host "Starting environment setup..."
 
-if ($SkipInfrastructure -eq '$false' -or -not (Test-Path -Path './infra/InfrastructureOutputs.json')) {
+if ($SkipInfrastructure -eq $false) {
     Write-Host "Deploying infrastructure..."
     $InfrastructureOutputs = (./infra/Deploy-Infrastructure.ps1 `
             -DeploymentName $DeploymentName `
-            -Location $Location)
+            -Location $Location `
+            -ErrorAction Stop)
 }
 else {
     Write-Host "Skipping infrastructure deployment. Using existing outputs..."
@@ -55,10 +55,10 @@ else {
 $ResourceGroupName = $InfrastructureOutputs.resourceGroupInfo.value.name
 $ManagedIdentityClientId = $InfrastructureOutputs.managedIdentityInfo.value.clientId
 $StorageAccountName = $InfrastructureOutputs.storageAccountInfo.value.name
-$DocumentIntelligenceEndpoint = $InfrastructureOutputs.documentIntelligenceInfo.value.endpoint
-$CompletionsOpenAIEndpoint = $InfrastructureOutputs.openAIInfo.value.endpoint
-$CompletionsOpenAIEmbeddingDeployment = $InfrastructureOutputs.openAIInfo.value.embeddingModelDeploymentName
-$CompletionsOpenAIModelDeployment = $InfrastructureOutputs.openAIInfo.value.completionModelDeploymentName
+$DocumentIntelligenceEndpoint = $InfrastructureOutputs.aiServicesInfo.value.endpoint
+$CompletionsOpenAIEndpoint = $InfrastructureOutputs.aiServicesInfo.value.openAIEndpoint
+$CompletionsOpenAIEmbeddingDeployment = $InfrastructureOutputs.aiServicesInfo.value.embeddingModelDeploymentName
+$CompletionsOpenAIModelDeployment = $InfrastructureOutputs.aiServicesInfo.value.completionModelDeploymentName
 
 Write-Host "Updating local settings..."
 
