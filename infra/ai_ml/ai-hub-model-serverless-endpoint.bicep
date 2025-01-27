@@ -20,7 +20,7 @@ type keyVaultConfigInfo = {
 @description('Serverless model information for serverless endpoint deployments.')
 type serverlessModelInfo = {
   @description('Name of the model. The model ID will be determined by the template.')
-  name: 'Phi-3-mini-128k-instruct' | null
+  name: string?
   @description('Model ID. Optional override if the expected model name is not supported. Value may start with azureml://.')
   id: string?
 }
@@ -98,6 +98,8 @@ module secondaryKeySecret '../security/key-vault-secret.bicep' = if (keyVaultCon
   }
 }
 
+@description('The deployed AI model serverless endpoint resource.')
+output resource resource = modelServerlessEndpoint
 @description('ID for the deployed AI model serverless endpoint resource.')
 output id string = modelServerlessEndpoint.id
 @description('Name for the deployed AI model serverless endpoint resource.')

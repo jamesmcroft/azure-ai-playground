@@ -120,8 +120,23 @@ param disableLocalAuth bool = true
 param raiPolicies raiPolicyInfo[] = []
 @description('Role assignments to create for the AI Services instance.')
 param roleAssignments roleAssignmentInfo[] = []
-@description('Diagnostic settings to configure for the AI Services instance.')
-param diagnosticSettings diagnosticSettingsInfo?
+@description('Name of the Log Analytics Workspace to use for diagnostic settings.')
+param logAnalyticsWorkspaceName string?
+@description('Diagnostic settings to configure for the AI Services instance. Defaults to all logs and metrics.')
+param diagnosticSettings diagnosticSettingsInfo = {
+  logs: [
+    {
+      categoryGroup: 'allLogs'
+      enabled: true
+    }
+  ]
+  metrics: [
+    {
+      category: 'AllMetrics'
+      enabled: true
+    }
+  ]
+}
 
 resource aiServices 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
   name: name
@@ -162,56 +177,56 @@ resource raiPolicy 'Microsoft.CognitiveServices/accounts/raiPolicies@2024-04-01-
       contentFilters: [
         {
           name: 'violence'
-          allowedContentLevel: raiPolicy.prompt.?violence.?allowedContentLevel
+          allowedContentLevel: raiPolicy.prompt.?violence.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.prompt.?violence.?blocking ?? true
           enabled: raiPolicy.prompt.?violence.?enabled ?? true
           source: 'Prompt'
         }
         {
           name: 'violence'
-          allowedContentLevel: raiPolicy.completion.?violence.?allowedContentLevel
+          allowedContentLevel: raiPolicy.completion.?violence.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.completion.?violence.?blocking ?? true
           enabled: raiPolicy.completion.?violence.?enabled ?? true
           source: 'Completion'
         }
         {
           name: 'hate'
-          allowedContentLevel: raiPolicy.prompt.?hate.?allowedContentLevel
+          allowedContentLevel: raiPolicy.prompt.?hate.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.prompt.?hate.?blocking ?? true
           enabled: raiPolicy.prompt.?hate.?enabled ?? true
           source: 'Prompt'
         }
         {
           name: 'hate'
-          allowedContentLevel: raiPolicy.completion.?hate.?allowedContentLevel
+          allowedContentLevel: raiPolicy.completion.?hate.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.completion.?hate.?blocking ?? true
           enabled: raiPolicy.completion.?hate.?enabled ?? true
           source: 'Completion'
         }
         {
           name: 'sexual'
-          allowedContentLevel: raiPolicy.prompt.?sexual.?allowedContentLevel
+          allowedContentLevel: raiPolicy.prompt.?sexual.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.prompt.?sexual.?blocking ?? true
           enabled: raiPolicy.prompt.?sexual.?enabled ?? true
           source: 'Prompt'
         }
         {
           name: 'sexual'
-          allowedContentLevel: raiPolicy.completion.?sexual.?allowedContentLevel
+          allowedContentLevel: raiPolicy.completion.?sexual.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.completion.?sexual.?blocking ?? true
           enabled: raiPolicy.completion.?sexual.?enabled ?? true
           source: 'Completion'
         }
         {
           name: 'selfharm'
-          allowedContentLevel: raiPolicy.prompt.?selfharm.?allowedContentLevel
+          allowedContentLevel: raiPolicy.prompt.?selfharm.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.prompt.?selfharm.?blocking ?? true
           enabled: raiPolicy.prompt.?selfharm.?enabled ?? true
           source: 'Prompt'
         }
         {
           name: 'selfharm'
-          allowedContentLevel: raiPolicy.completion.?selfharm.?allowedContentLevel
+          allowedContentLevel: raiPolicy.completion.?selfharm.?allowedContentLevel ?? 'High'
           blocking: raiPolicy.completion.?selfharm.?blocking ?? true
           enabled: raiPolicy.completion.?selfharm.?enabled ?? true
           source: 'Completion'
@@ -224,8 +239,8 @@ resource raiPolicy 'Microsoft.CognitiveServices/accounts/raiPolicies@2024-04-01-
         }
         {
           name: 'indirect_attack'
-          blocking: raiPolicy.prompt.?indirect_attack.?blocking ?? true
-          enabled: raiPolicy.prompt.?indirect_attack.?enabled ?? true
+          blocking: raiPolicy.prompt.?indirect_attack.?blocking ?? false
+          enabled: raiPolicy.prompt.?indirect_attack.?enabled ?? false
           source: 'Prompt'
         }
         {
@@ -277,11 +292,15 @@ resource assignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
   }
 ]
 
-resource aiServicesDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = if (diagnosticSettings != null) {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' existing = if (logAnalyticsWorkspaceName != null) {
+  name: logAnalyticsWorkspaceName!
+}
+
+resource aiServicesDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = if (logAnalyticsWorkspaceName != null) {
   name: '${aiServices.name}-diagnostic-settings'
   scope: aiServices
   properties: {
-    workspaceId: diagnosticSettings!.workspaceId
+    workspaceId: logAnalyticsWorkspace.id
     logs: diagnosticSettings!.logs
     metrics: diagnosticSettings!.metrics
   }
@@ -295,9 +314,9 @@ output name string = aiServices.name
 output endpoint string = aiServices.properties.endpoint
 @description('Host for the deployed AI Services resource.')
 output host string = split(aiServices.properties.endpoint, '/')[2]
-@description('Endpoint for accessing the Azure OpenAI API for the deployed AI Services resource.')
+@description('Endpoint for the Azure OpenAI API.')
 output openAIEndpoint string = aiServices.properties.endpoints['OpenAI Language Model Instance API']
-@description('Host for accessing the Azure OpenAI API for the deployed AI Services resource.')
+@description('Host for the Azure OpenAI API.')
 output openAIHost string = split(aiServices.properties.endpoints['OpenAI Language Model Instance API'], '/')[2]
 @description('Principal ID for the deployed AI Services resource.')
 output principalId string = identityId == null ? aiServices.identity.principalId : identityId!

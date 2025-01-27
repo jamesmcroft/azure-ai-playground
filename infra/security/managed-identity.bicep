@@ -16,12 +16,23 @@ type roleAssignmentInfo = {
   principalType: 'Device' | 'User' | 'Group' | 'ServicePrincipal' | 'ForeignGroup'
 }
 
+@export()
+@description('Identity information to use for role assignments.')
+type identityInfo = {
+  @description('Principal ID of the identity to assign to.')
+  principalId: string
+  @description('Type of the principal ID.')
+  principalType: 'Device' | 'User' | 'Group' | 'ServicePrincipal' | 'ForeignGroup'
+}
+
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   name: name
   location: location
   tags: tags
 }
 
+@description('The deployed Managed Identity resource.')
+output resource resource = identity
 @description('ID for the deployed Managed Identity resource.')
 output id string = identity.id
 @description('Name for the deployed Managed Identity resource.')

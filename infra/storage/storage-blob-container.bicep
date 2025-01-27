@@ -19,7 +19,9 @@ resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@20
   }
 }
 
+@description('The deployed Storage blob container resource.')
+output resource resource = container
 @description('ID for the deployed Storage blob container resource.')
 output id string = container.id
 @description('Name for the deployed Storage blob container resource.')
-output name string = name
+output name string = container.name
