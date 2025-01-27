@@ -19,6 +19,14 @@ RUN apt-get update \
     python3-wheel \
     python3-setuptools
 
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir \
+    packaging \
+    matplotlib \
+    transformers \
+    pillow \
+    torch
+
 # Default to bash shell
 ENV SHELL=/bin/bash \
     DOCKER_BUILDKIT=1

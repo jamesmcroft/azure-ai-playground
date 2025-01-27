@@ -1,1 +1,1 @@
-pip install matplotlib transformers pillow torch flash_attn timm einops
+pip install -r requirements.txt
