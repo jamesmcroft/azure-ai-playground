@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eux
+
+# Setup STDERR.
+err() {
+    echo "(!) $*" >&2
+}
+
+# Ensure apt is in non-interactive to avoid prompts
+export DEBIAN_FRONTEND=noninteractive
+
+pip --disable-pip-version-check --no-cache-dir install --user -r requirements.txt

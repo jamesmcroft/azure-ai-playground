@@ -1,8 +1,0 @@
-{
-    "id": "cuda-dev-tools",
-    "name": "CUDA Development Tools",
-    "install": {
-        "app": "",
-        "file": "install.sh"
-    }
-}

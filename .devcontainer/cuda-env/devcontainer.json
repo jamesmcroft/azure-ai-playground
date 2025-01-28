@@ -1,9 +1,6 @@
 {
   "name": "Azure AI Playground - CUDA",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "image": "nvidia/cuda:12.5.0-devel-ubuntu22.04",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {
       "version": "latest",
@@ -13,7 +10,8 @@
     "ghcr.io/devcontainers/features/azure-cli:1": {},
     "ghcr.io/azure/azure-dev/azd:0": {},
     "ghcr.io/devcontainers/features/dotnet:2": {
-      "version": "8.0"
+      "version": "9.0",
+      "additionalVersions": "8.0"
     },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "22",
@@ -28,7 +26,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "version": "latest"
     },
-    "./local-features/cuda-dev-tools": "latest"
+    "./local-features/dev-tools": "latest"
   },
   "overrideFeatureInstallOrder": [
     "ghcr.io/devcontainers/features/git",
@@ -40,7 +38,7 @@
     "ghcr.io/devcontainers/features/git-lfs",
     "ghcr.io/devcontainers/features/github-cli",
     "ghcr.io/devcontainers/features/docker-in-docker",
-    "./local-features/cuda-dev-tools"
+    "./local-features/dev-tools"
   ],
   "forwardPorts": [],
   "otherPortsAttributes": {
@@ -49,21 +47,30 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "GitHub.remotehub",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "github.vscode-pull-request-github",
+        "ms-vscode.vscode-node-azure-pack",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.azure-dev",
+        "ms-azuretools.vscode-bicep",
+        "ms-vscode.powershell",
+        "ms-vscode-remote.vscode-remote-extensionpack",
+        "ms-azuretools.vscode-docker",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-azuretools.vscode-azurestorage",
+        "ms-azuretools.vscode-azure-github-copilot",
         "ms-python.vscode-pylance",
         "ms-python.python",
         "ms-python.debugpy",
-        "ms-toolsai.jupyter",
-        "ms-azuretools.vscode-bicep",
-        "ms-vscode.vscode-node-azure-pack",
-        "ms-vscode.powershell",
         "ms-dotnettools.csdevkit",
-        "GitHub.vscode-pull-request-github",
         "ms-dotnettools.dotnet-interactive-vscode",
         "NVIDIA.nsight-vscode-edition"
       ]
     }
   },
-  "postCreateCommand": "pip3 --disable-pip-version-check install --user -r requirements.txt --extra-index-url https://pypi.nvidia.com && nvidia-smi",
+  "postCreateCommand": ".devcontainer/post-create.sh",
   "runArgs": [
     "--gpus=all"
   ]
