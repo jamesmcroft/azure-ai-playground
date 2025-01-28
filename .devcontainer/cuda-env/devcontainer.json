@@ -70,7 +70,7 @@
       ]
     }
   },
-  "postCreateCommand": ".devcontainer/post-create.sh",
+  "postCreateCommand": ".devcontainer/cuda-env/post-create.sh",
   "runArgs": [
     "--gpus=all"
   ]

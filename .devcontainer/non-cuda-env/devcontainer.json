@@ -71,5 +71,5 @@
       ]
     }
   },
-  "postCreateCommand": ".devcontainer/post-create.sh"
+  "postCreateCommand": ".devcontainer/non-cuda-env/post-create.sh"
 }
