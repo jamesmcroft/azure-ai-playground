@@ -1,5 +1,8 @@
 # Testing Playground for Azure AI Services
 
+> [!IMPORTANT]
+> This sample playground has been archived and is preserved for reference only. For official Azure AI Document Processing samples, see the [Azure-Samples repo](https://github.com/Azure-Samples/azure-ai-document-processing-samples).
+
 This repository is primarily used to test and evaluate techniques with Azure AI services for the purposes of learning and experimentation. The repository is organized into different directories, each of which contains a different set of experiments and tests.
 
 This repository is not intended for production use, and the code contained within is not guaranteed to be secure or optimized. It is intended for educational purposes only.
